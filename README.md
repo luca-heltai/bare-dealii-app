@@ -19,3 +19,19 @@ The CMakeLists.txt will generate both an executable and a library
 containing all cc files **except** source/main.cc. This library is
 added to the running tests, so that you can make tests on your
 application just as you would do with the deal.II library.
+
+Modify the TARGET variable in the CMakeLists.txt to your application
+name. A library named ${TARGET}lib will be generated together with the
+executable.
+
+Take a look at
+https://www.dealii.org/developer/developers/testsuite.html for more
+information on how to create tests and add categories of tests.
+
+Licence
+=======
+
+Please see the file ./LICENSE for details
+
+
+
