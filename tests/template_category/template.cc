@@ -13,11 +13,11 @@
 // format.
 
 #include "../tests.h"
-#include "template_class.h"
+// #include "template_class.h"
 
 int main () 
 {
     initlog();
-    TemplateClass<2> tc;
+//    TemplateClass<2> tc;
     deallog << 0 << std::endl;
 }
