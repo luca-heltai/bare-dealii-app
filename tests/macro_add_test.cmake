@@ -170,7 +170,7 @@ MACRO(DEAL_II_ADD_TEST _category _test_name _comparison_file)
           COMPILE_DEFINITIONS
             SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}"
           )
-        TARGET_LINK_LIBRARIES(${_target} ${DEAL_II_TARGET_${_build}} ${TARGET}lib)
+        TARGET_LINK_LIBRARIES(${_target} ${DEAL_II_TARGET_${_build}} ${APP_TARGET}lib)
       ENDIF()
 
       #
