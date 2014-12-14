@@ -28,6 +28,11 @@ FOREACH(_file ${_macro_files})
   INCLUDE(${_file})
 ENDFOREACH()
 
+# Now generate also a library containing all files except main.cc
+SET(LIB_FILES ${TARGET_SRC})
+LIST(REMOVE_ITEM TARGET_SRC source/main.cc)
+ADD_LIBRARY(${TARGET}lib SHARED ${LIB_FILES})
+DEAL_II_SETUP_TARGET(${TARGET}lib)
 
 #
 # Setup the testsuite.
