@@ -12,7 +12,7 @@ SET(TARGET_SRC
     ${_files}
   )
 
-#include_directories(include /opt/local/include)
+INCLUDE_DIRECTORIES(include)
 
 # Usually, you will not need to modify anything beyond this point...
 
@@ -33,4 +33,10 @@ DEAL_II_INITIALIZE_CACHED_VARIABLES()
 PROJECT(${TARGET})
 DEAL_II_INVOKE_AUTOPILOT()
 
-add_subdirectory(tests)
+ADD_SUBDIRECTORY(tests)
+
+# Now generate also a library containing all files except main.cc
+SET(LIB_FILES ${TARGET_SRC})
+LIST(REMOVE_ITEM TARGET_SRC source/main.cc)
+ADD_LIBRARY(${TARGET}lib SHARED ${LIB_FILES})
+DEAL_II_SETUP_TARGET(${TARGET}lib)

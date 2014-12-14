@@ -29,7 +29,7 @@ class TemplateClass {
   void run();
   
  private:
-  Triangulation<dim> tria;
+  dealii::Triangulation<dim> tria;
 };
 
 #endif

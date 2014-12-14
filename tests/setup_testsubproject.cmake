@@ -20,8 +20,8 @@
 #
 # It is assumed that the following variables are set:
 #
-#    DEAL_II_BINARY_DIR
-#    DEAL_II_SOURCE_DIR
+#    APP_BINARY_DIR
+#    APP_SOURCE_DIR
 #      - pointing to a source and binary directory of a deal.II build
 #
 # This file sets up the following options, that can be overwritten by
@@ -45,20 +45,20 @@ ENDFOREACH()
 #
 # Load all macros:
 #
-FILE(GLOB _macro_files ${DEAL_II_SOURCE_DIR}/tests/cmake/macros/*.cmake)
+FILE(GLOB _macro_files ${APP_SOURCE_DIR}/tests/cmake/macros/*.cmake)
 FOREACH(_file ${_macro_files})
   INCLUDE(${_file})
 ENDFOREACH()
 
-INCLUDE(${DEAL_II_SOURCE_DIR}/tests/macro_add_test.cmake)
-INCLUDE(${DEAL_II_SOURCE_DIR}/tests/macro_pickup_tests.cmake)
+INCLUDE(${APP_SOURCE_DIR}/tests/macro_add_test.cmake)
+INCLUDE(${APP_SOURCE_DIR}/tests/macro_pickup_tests.cmake)
 
 #
 # Pick up values from environment:
 #
 FOREACH(_var
-  DEAL_II_BINARY_DIR
-  DEAL_II_SOURCE_DIR
+  APP_BINARY_DIR
+  APP_SOURCE_DIR
   TEST_DIFF
   TEST_TIME_LIMIT
   TEST_PICKUP_REGEX
@@ -77,7 +77,7 @@ ENDFOREACH()
 #
 
 FIND_PACKAGE(deal.II 8.0 REQUIRED
-  HINTS ${DEAL_II_BINARY_DIR} ${DEAL_II_DIR}
+  HINTS ${APP_BINARY_DIR} ${DEAL_II_DIR}
   )
 SET(CMAKE_CXX_COMPILER ${DEAL_II_CXX_COMPILER} CACHE STRING "CXX Compiler.")
 
