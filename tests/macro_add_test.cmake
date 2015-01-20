@@ -103,7 +103,10 @@ MACRO(DEAL_II_ADD_TEST _category _test_name _comparison_file)
   ENDIF()
 
 
-  FOREACH(_build ${DEAL_II_BUILD_TYPES})
+  MESSAGE("Build type: ${CMAKE_BUILD_TYPE}")
+  STRING(TOUPPER ${CMAKE_BUILD_TYPE} _builds)
+  FOREACH(_build "${_builds}")
+  
 
     ITEM_MATCHES(_match "${_build}" ${_configuration})
     IF(_match OR "${_configuration}" STREQUAL "")
@@ -170,7 +173,7 @@ MACRO(DEAL_II_ADD_TEST _category _test_name _comparison_file)
           COMPILE_DEFINITIONS
             SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}"
           )
-	FIND_LIBRARY(APP_LIB ${APP_TARGET}lib ${APP_BINARY_DIR}/tests/)
+        FIND_LIBRARY(APP_LIB ${APP_TARGET}lib ${APP_BINARY_DIR})
         TARGET_LINK_LIBRARIES(${_target} ${DEAL_II_TARGET_${_build}} ${APP_LIB})
       ENDIF()
 
