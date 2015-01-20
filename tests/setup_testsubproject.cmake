@@ -22,7 +22,7 @@
 #
 #    APP_BINARY_DIR
 #    APP_SOURCE_DIR
-#      - pointing to a source and binary directory of a deal.II build
+# pointing to the source and binary directory of your application
 #
 # This file sets up the following options, that can be overwritten by
 # environment or command line:
@@ -77,7 +77,7 @@ ENDFOREACH()
 #
 
 FIND_PACKAGE(deal.II 8.0 REQUIRED
-  HINTS ${APP_BINARY_DIR} ${DEAL_II_DIR}
+  HINTS ${DEAL_II_BINARY_DIR} ${DEAL_II_DIR} $ENV{DEAL_II_DIR}
   )
 SET(CMAKE_CXX_COMPILER ${DEAL_II_CXX_COMPILER} CACHE STRING "CXX Compiler.")
 
