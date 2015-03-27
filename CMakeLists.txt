@@ -1,12 +1,15 @@
 ##
-#  CMake script for the step-1 tutorial program:
+# CMake script for large project, with one executable
+# and a library
 ##
 
 # Set the name of the project and target:
 SET(TARGET empty)
 
 # Specify which file contains the main() function
+# Set it to empty if you don't want an executable
 SET(_main source/main.cc)
+#SET(_main "")
 
 file(GLOB _files source/*cc)
 
@@ -15,9 +18,11 @@ SET(TARGET_SRC
     ${_files}
   )
 
-LIST(REMOVE_ITEM _files
-  ${CMAKE_CURRENT_SOURCE_DIR}/${_main}
-)
+IF(NOT "${_main}" STREQUAL "") 
+    LIST(REMOVE_ITEM _files
+      ${CMAKE_CURRENT_SOURCE_DIR}/${_main}
+    )
+ENDIF()
 
 INCLUDE_DIRECTORIES(include)
 
@@ -39,18 +44,27 @@ ENDIF()
 DEAL_II_INITIALIZE_CACHED_VARIABLES()
 PROJECT(${TARGET})
 
-ADD_LIBRARY(${TARGET}-lib SHARED ${_files})
-ADD_EXECUTABLE(${TARGET} ${_main})
-TARGET_LINK_LIBRARIES(${TARGET} ${TARGET}-lib)
-SET(TEST_LIBRARIES_RELEASE ${TARGET}-lib)
-DEAL_II_SETUP_TARGET(${TARGET} RELEASE)
-DEAL_II_SETUP_TARGET(${TARGET}-lib RELEASE)
+IF(DEAL_II_BUILD_TYPE MATCHES "Release")
+    ADD_LIBRARY(${TARGET}-lib SHARED ${_files})
+    IF(NOT "${_main}" STREQUAL "") 
+	ADD_EXECUTABLE(${TARGET} ${_main})
+	TARGET_LINK_LIBRARIES(${TARGET} ${TARGET}-lib)
+	DEAL_II_SETUP_TARGET(${TARGET} RELEASE)
+    ENDIF()
+    SET(TEST_LIBRARIES_RELEASE ${TARGET}-lib)
+    DEAL_II_SETUP_TARGET(${TARGET}-lib RELEASE)
+ENDIF()
 
-ADD_LIBRARY(${TARGET}-lib.g SHARED ${_files})
-ADD_EXECUTABLE(${TARGET}.g ${_main})
-TARGET_LINK_LIBRARIES(${TARGET}.g ${TARGET}-lib.g)
-SET(TEST_LIBRARIES_DEBUG ${TARGET}-lib.g)
-DEAL_II_SETUP_TARGET(${TARGET}.g DEBUG)
-DEAL_II_SETUP_TARGET(${TARGET}-lib.g DEBUG)
+IF(DEAL_II_BUILD_TYPE MATCHES "Debug")
+    ADD_LIBRARY(${TARGET}-lib.g SHARED ${_files})
+    IF(NOT "${_main}" STREQUAL "") 
+	ADD_EXECUTABLE(${TARGET}.g ${_main})
+	TARGET_LINK_LIBRARIES(${TARGET}.g ${TARGET}-lib.g)
+	DEAL_II_SETUP_TARGET(${TARGET}.g DEBUG)
+    ENDIF()
+    SET(TEST_LIBRARIES_DEBUG ${TARGET}-lib.g)
+    DEAL_II_SETUP_TARGET(${TARGET}-lib.g DEBUG)
+ENDIF()
 
 ADD_SUBDIRECTORY(tests)
+ENABLE_TESTING()
