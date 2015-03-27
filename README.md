@@ -21,12 +21,16 @@ added to the running tests, so that you can make tests on your
 application just as you would do with the deal.II library.
 
 Modify the TARGET variable in the CMakeLists.txt to your application
-name. A library named ./tests/${TARGET}lib will be generated together
-with the executable when you compile your application.
+name. Two libraries named ./tests/${TARGET}lib and ./tests/${TARGET}lib.g 
+will be generated together with the executable when you compile your 
+application.
 
-**After** you have compiled your application, you can run 
+After you have compiled your application, you can run 
 
-	make setup_tests
+	make test
+
+or
+	
 	ctest 
 
 to start the testsuite.
