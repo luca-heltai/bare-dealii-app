@@ -46,6 +46,17 @@ PROJECT(${TARGET})
 
 IF(DEAL_II_BUILD_TYPE MATCHES "Release")
     ADD_LIBRARY(${TARGET}-lib SHARED ${_files})
+    FIND_LIBRARY(SAK dealii-sak HINTS 
+		 ${DEAL_II_SAK_DIR} 
+		 ${DEAL_II_SAK} 
+		 $ENV{DEAL_II_SAK}
+		 PATH_SUFFIXES lib)
+    IF(NOT "${SAK}" STREQUAL "SAK-NOTFOUND")
+	TARGET_LINK_LIBRARIES(${TARGET}-lib ${SAK})
+	GET_FILENAME_COMPONENT(DEAL_II_SAK ${SAK} DIRECTORY)
+    ELSE()
+	MESSAGE("Library dealii-sak not found: ${SAK}")
+    ENDIF()
     IF(NOT "${_main}" STREQUAL "") 
 	ADD_EXECUTABLE(${TARGET} ${_main})
 	TARGET_LINK_LIBRARIES(${TARGET} ${TARGET}-lib)
@@ -57,6 +68,17 @@ ENDIF()
 
 IF(DEAL_II_BUILD_TYPE MATCHES "Debug")
     ADD_LIBRARY(${TARGET}-lib.g SHARED ${_files})
+    FIND_LIBRARY(SAK.g dealii-sak.g HINTS 
+		 ${DEAL_II_SAK_DIR} 
+		 ${DEAL_II_SAK} 
+		 $ENV{DEAL_II_SAK}
+		 PATH_SUFFIXES lib)
+    IF(NOT "${SAK.g}" STREQUAL "SAK.g-NOTFOUND")
+	GET_FILENAME_COMPONENT(DEAL_II_SAK ${SAK.g} DIRECTORY)
+	TARGET_LINK_LIBRARIES(${TARGET}-lib.g ${SAK.g})
+    ELSE()
+	MESSAGE("Library dealii-sak.g not found: ${SAK.g}")
+    ENDIF()
     IF(NOT "${_main}" STREQUAL "") 
 	ADD_EXECUTABLE(${TARGET}.g ${_main})
 	TARGET_LINK_LIBRARIES(${TARGET}.g ${TARGET}-lib.g)
@@ -66,5 +88,20 @@ IF(DEAL_II_BUILD_TYPE MATCHES "Debug")
     DEAL_II_SETUP_TARGET(${TARGET}-lib.g DEBUG)
 ENDIF()
 
+INCLUDE_DIRECTORIES(${DEAL_II_SAK}/../include)
+
 ADD_SUBDIRECTORY(tests)
 ENABLE_TESTING()
+
+# Doxygen
+find_package(Doxygen)
+if(DOXYGEN_FOUND)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
+add_custom_target(doc
+${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+COMMENT "Generating API documentation with Doxygen" VERBATIM
+)
+endif(DOXYGEN_FOUND)
+
+
