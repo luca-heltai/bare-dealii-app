@@ -13,7 +13,6 @@
 // format.
 
 #include "tests.h"
-#include "template_class.h"
 
 int main ()
 {
