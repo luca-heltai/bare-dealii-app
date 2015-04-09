@@ -22,6 +22,12 @@ containing all cc files **except** source/main.cc. This library is
 added to the running tests, so that you can make tests on your
 application just as you would do with the deal.II library.
 
+Make sure you have dealii-sak installed, and that you export the 
+environment variable DEAL_II_SAK to point to the location of 
+dealii-sak installation. If you don't want to add that to your 
+environment, just add -DDEAL_II_SAK=/path/to/installation to 
+your cmake command.
+
 Modify the TARGET variable in the CMakeLists.txt to your application
 name. Two libraries named ./tests/${TARGET}lib and ./tests/${TARGET}lib.g 
 will be generated together with the executable when you compile your 
