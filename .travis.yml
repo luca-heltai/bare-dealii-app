@@ -20,7 +20,7 @@ script:
     - cd build
     - export DEAL_II_DIR=/home/travis/dealii-inst
     - export DEAL_II_SAK=/home/travis/dealii-sak-inst
-    - cmake -GNinja ..
+    - cmake -GNinja -DDEAL_II_SAK=/home/travis/dealii-sak-inst ..
     - ninja -j4 
     - ctest -j4 -V
     - cd ..; ./scripts/check_indentation.sh
