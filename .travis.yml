@@ -20,7 +20,6 @@ before_install:
     - tar xfz dealii-sak-CI-build.tgz -C /
     - ./scripts/setup_astyle.sh
 script:
-    - mkdir build
     - cd build
     - export DEAL_II_DIR=/home/travis/dealii-inst
     - export DEAL_II_SAK=/home/travis/dealii-sak-inst

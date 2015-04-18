@@ -35,7 +35,7 @@ private:
   unsigned int initial_refinement;
   unsigned int n_cycles;
   std::vector<unsigned int> dirichlet_ids;
-  
+
   ParsedGridGenerator<dim,spacedim> pgg;
   ParsedFiniteElement<dim,spacedim> pfe;
   ParsedFunction<spacedim> permeability;

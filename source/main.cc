@@ -23,9 +23,9 @@ int main ()
       std::ofstream used_prms("used_parameters.prm");
       ParameterAcceptor::prm.print_parameters(used_prms, ParameterHandler::ShortText);
       used_prms.close();
-      
+
       problem.run();
-      
+
     }
   catch (std::exception &exc)
     {

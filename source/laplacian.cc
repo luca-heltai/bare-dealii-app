@@ -53,80 +53,83 @@ Laplacian<dim,spacedim>::Laplacian() :
 {}
 
 template <int dim, int spacedim>
-void Laplacian<dim,spacedim>::declare_parameters(ParameterHandler &prm){
+void Laplacian<dim,spacedim>::declare_parameters(ParameterHandler &prm)
+{
 
   add_parameter(prm, &n_cycles, "Number of cycles", "4",
-		Patterns::Integer());
+                Patterns::Integer());
 
   add_parameter(prm, &initial_refinement, "Initial refinement", "1",
-		Patterns::Integer());
+                Patterns::Integer());
 
   add_parameter(prm, &dirichlet_ids, "Dirichlet boundary ids", "0",
-		Patterns::List(Patterns::Integer()));
-  
+                Patterns::List(Patterns::Integer()));
+
 };
 
 
 
 template <int dim, int spacedim>
-void Laplacian<dim,spacedim>::run() {
-  
+void Laplacian<dim,spacedim>::run()
+{
+
   SparsityPattern      sparsity;
   SparseMatrix<double> matrix;
-  
+
   Vector<double>       solution;
   Vector<double>       rhs;
-  
+
   auto tria = pgg.serial();
   tria->refine_global(initial_refinement);
-  
+
   auto fe = pfe();
   DoFHandler<dim,spacedim> dh(*tria);
-  
-  for(unsigned int cycle=0; cycle<n_cycles; ++cycle) {
-    // After the first round, make an additional refinement
-    if(cycle>0)
-      tria->refine_global(1);
-    
-    dh.distribute_dofs(*fe);
-  
-    ConstraintMatrix     constraints;
-    // Initialize matrix and vectors
-    DynamicSparsityPattern d_sparsity(dh.n_dofs());
-    DoFTools::make_sparsity_pattern (dh, d_sparsity);
-    sparsity.copy_from(d_sparsity);
-    matrix.reinit (sparsity);
-    
-    solution.reinit(dh.n_dofs());
-    rhs.reinit(dh.n_dofs());
-    
-    // Add boundary conditions for each Dirichlet id
-    for(auto id : dirichlet_ids) 
-      VectorTools::interpolate_boundary_values(dh, id,
-					       dirichlet_bc, constraints);
-    
-    constraints.close();
-    
-    QGauss<dim> quad(2*fe->degree+1);
-    MatrixCreator::create_laplace_matrix (StaticMappingQ1<dim,spacedim>::mapping,
-					  dh, quad, matrix,
-					  forcing_term, rhs, &permeability, constraints);
-  
-    SparseDirectUMFPACK inverse;
-    inverse.factorize(matrix);
-    inverse.vmult(solution, rhs);
-    constraints.distribute(solution);
-  
-    DataOut<dim,DoFHandler<dim,spacedim> > data_out;
-    data_out.attach_dof_handler (dh);
-    data_out.add_data_vector (solution, "solution");
-    data_out.build_patches ();
-    std::stringstream name;
-    name << "solution_" << cycle << ".vtu";
-    std::ofstream output (name.str().c_str());
-    data_out.write_vtu (output);
-    eh.error_from_exact(dh, solution, exact_solution);
-  }
+
+  for (unsigned int cycle=0; cycle<n_cycles; ++cycle)
+    {
+      // After the first round, make an additional refinement
+      if (cycle>0)
+        tria->refine_global(1);
+
+      dh.distribute_dofs(*fe);
+
+      ConstraintMatrix     constraints;
+      // Initialize matrix and vectors
+      DynamicSparsityPattern d_sparsity(dh.n_dofs());
+      DoFTools::make_sparsity_pattern (dh, d_sparsity);
+      sparsity.copy_from(d_sparsity);
+      matrix.reinit (sparsity);
+
+      solution.reinit(dh.n_dofs());
+      rhs.reinit(dh.n_dofs());
+
+      // Add boundary conditions for each Dirichlet id
+      for (auto id : dirichlet_ids)
+        VectorTools::interpolate_boundary_values(dh, id,
+                                                 dirichlet_bc, constraints);
+
+      constraints.close();
+
+      QGauss<dim> quad(2*fe->degree+1);
+      MatrixCreator::create_laplace_matrix (StaticMappingQ1<dim,spacedim>::mapping,
+                                            dh, quad, matrix,
+                                            forcing_term, rhs, &permeability, constraints);
+
+      SparseDirectUMFPACK inverse;
+      inverse.factorize(matrix);
+      inverse.vmult(solution, rhs);
+      constraints.distribute(solution);
+
+      DataOut<dim,DoFHandler<dim,spacedim> > data_out;
+      data_out.attach_dof_handler (dh);
+      data_out.add_data_vector (solution, "solution");
+      data_out.build_patches ();
+      std::stringstream name;
+      name << "solution_" << cycle << ".vtu";
+      std::ofstream output (name.str().c_str());
+      data_out.write_vtu (output);
+      eh.error_from_exact(dh, solution, exact_solution);
+    }
   eh.output_table();
 }
 
