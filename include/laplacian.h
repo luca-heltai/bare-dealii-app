@@ -19,6 +19,7 @@
 #include "parsed_grid_generator.h"
 #include "parsed_finite_element.h"
 #include "parsed_function.h"
+#include "parsed_data_out.h"
 #include "error_handler.h"
 
 template <int dim, int spacedim=dim>
@@ -43,6 +44,7 @@ private:
   ParsedFunction<spacedim> forcing_term;
   ParsedFunction<spacedim> exact_solution;
   ErrorHandler<1> eh;
+  ParsedDataOut<dim,spacedim> data_out;
 };
 
 #endif

@@ -120,15 +120,11 @@ void Laplacian<dim,spacedim>::run()
       inverse.vmult(solution, rhs);
       constraints.distribute(solution);
 
-      DataOut<dim,DoFHandler<dim,spacedim> > data_out;
-      data_out.attach_dof_handler (dh);
-      data_out.add_data_vector (solution, "solution");
-      data_out.build_patches ();
-      std::stringstream name;
-      name << "solution_" << cycle << ".vtu";
-      std::ofstream output (name.str().c_str());
-      data_out.write_vtu (output);
       eh.error_from_exact(dh, solution, exact_solution);
+
+      data_out.prepare_data_output (dh, "." + Utilities::int_to_string(cycle));
+      data_out.add_data_vector (solution, "solution");
+      data_out.write_data_and_clear ();
     }
   eh.output_table();
 }

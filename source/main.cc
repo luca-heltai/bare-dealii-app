@@ -12,18 +12,16 @@
 #include <iostream>
 
 #include "laplacian.h"
+#include <deal.II/base/utilities.h>
 
-int main ()
+int main (int argc, char **argv)
 {
   try
     {
+      Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv,
+                                                          numbers::invalid_unsigned_int);
       Laplacian<2> problem;
-      ParameterAcceptor::initialize("parameters.prm");
-
-      std::ofstream used_prms("used_parameters.prm");
-      ParameterAcceptor::prm.print_parameters(used_prms, ParameterHandler::ShortText);
-      used_prms.close();
-
+      ParameterAcceptor::initialize("parameters.prm", "used_parameters.prm");
       problem.run();
 
     }
