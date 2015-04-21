@@ -45,11 +45,12 @@ Laplacian<dim,spacedim>::Laplacian() :
   ParameterAcceptor("Global parameters"),
   pgg("Grid"),
   pfe("Finite element"),
-  permeability("Permeability coefficients"),
+  permeability("Permeability coefficients", "1"),
   dirichlet_bc("Dirichlet boundary conditions"),
-  forcing_term("Forcing term"),
-  exact_solution("Exact solution"),
-  eh("Error handler")
+  forcing_term("Forcing term", "8*pi^2*sin(2*pi*x)*sin(2*pi*y)"),
+  exact_solution("Exact solution", "sin(2*pi*x)*sin(2*pi*y)"),
+  eh("Error handler"),
+  data_out("Data out")
 {}
 
 template <int dim, int spacedim>
