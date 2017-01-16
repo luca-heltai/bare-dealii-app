@@ -28,7 +28,7 @@
 #include <deal.II/lac/vector.h>
 #include <deal.II/lac/full_matrix.h>
 #include <deal.II/lac/sparse_matrix.h>
-#include <deal.II/lac/compressed_sparsity_pattern.h>
+#include <deal.II/lac/dynamic_sparsity_pattern.h>
 #include <deal.II/lac/solver_cg.h>
 #include <deal.II/lac/precondition.h>
 #include <deal.II/numerics/data_out.h>
@@ -45,10 +45,10 @@ Laplacian<dim,spacedim>::Laplacian() :
   ParameterAcceptor("Global parameters"),
   pgg("Grid"),
   pfe("Finite element"),
-  permeability("Permeability coefficients", "1"),
-  dirichlet_bc("Dirichlet boundary conditions"),
-  forcing_term("Forcing term", "8*pi^2*sin(2*pi*x)*sin(2*pi*y)"),
-  exact_solution("Exact solution", "sin(2*pi*x)*sin(2*pi*y)"),
+  permeability("Permeability coefficients", 1, "1"),
+  dirichlet_bc("Dirichlet boundary conditions", 1),
+  forcing_term("Forcing term", 1, "8*pi^2*sin(2*pi*x)*sin(2*pi*y)"),
+  exact_solution("Exact solution", 1, "sin(2*pi*x)*sin(2*pi*y)"),
   eh("Error handler"),
   data_out("Data out")
 {}

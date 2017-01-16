@@ -14,13 +14,15 @@
 
 #include <iostream>
 
-#include "utilities.h"
-#include "parameter_acceptor.h"
-#include "parsed_grid_generator.h"
-#include "parsed_finite_element.h"
-#include "parsed_function.h"
-#include "parsed_data_out.h"
-#include "error_handler.h"
+#include <deal2lkit/utilities.h>
+#include <deal2lkit/parameter_acceptor.h>
+#include <deal2lkit/parsed_grid_generator.h>
+#include <deal2lkit/parsed_finite_element.h>
+#include <deal2lkit/parsed_function.h>
+#include <deal2lkit/parsed_data_out.h>
+#include <deal2lkit/error_handler.h>
+
+using namespace deal2lkit;
 
 template <int dim, int spacedim=dim>
 class Laplacian : public ParameterAcceptor
