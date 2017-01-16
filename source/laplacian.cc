@@ -66,7 +66,7 @@ void Laplacian<dim,spacedim>::declare_parameters(ParameterHandler &prm)
   add_parameter(prm, &dirichlet_ids, "Dirichlet boundary ids", "0",
                 Patterns::List(Patterns::Integer()));
 
-};
+}
 
 
 

@@ -46,6 +46,11 @@ Take a look at
 https://www.dealii.org/developer/developers/testsuite.html for more
 information on how to create tests and add categories of tests.
 
+Both `.travis.yml` and `.gitlab-ci.yml` files are provided that 
+build the application and run the tests in the tests directory using
+ctest, in continuous integration, by running under docker with the 
+image provided on dockerhub.com: `mathlab/deal2lkit:dev-debugrelease`.
+
 Licence
 =======
 

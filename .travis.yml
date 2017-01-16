@@ -13,11 +13,9 @@ notifications:
 language: C++
 
 before_install:
-- export IMG=mathlab/deal2lkit:dev-debugrelease 
-- alias dr="docker run -P -v `pwd`:/home/dealii/app:rw $IMG /bin/sh -c"
 - docker pull $IMG
-- dr "cd app; ./scripts/check_indentation.sh"
+- ./scripts/dr.sh "cd app; ./scripts/check_indentation.sh"
 
 script:
-- dr "mkdir app/build; cd app/build; cmake -GNinja ../; ninja"
-- dr "cd app/build; ctest -N; ctest -V"
+- ./scripts/dr.sh "test -d app/build-travis && rm -rf app/build-travis; mkdir app/build-travis; cd app/build-travis; cmake -GNinja ../; ninja"
+- ./scripts/dr.sh "cd app/build-travis; ctest -N; ctest -V"
