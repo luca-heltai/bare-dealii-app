@@ -13,7 +13,7 @@ notifications:
 language: C++
 
 before_install:
-- docker pull $IMG
+- docker pull mathlab/deal2lkit:dev-debugrelease
 - ./scripts/dr.sh "cd app; ./scripts/check_indentation.sh"
 
 script:
