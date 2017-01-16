@@ -124,3 +124,5 @@ if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in)
     )
     endif(DOXYGEN_FOUND)
 endif()
+
+add_custom_target(indent ./scripts/indent WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})

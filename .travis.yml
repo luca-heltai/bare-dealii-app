@@ -1,30 +1,23 @@
+sudo: required
+
+env:
+  - BUILD_TYPE=Release
+  - BUILD_TYPE=Debug
+
+services:
+  - docker
+
 notifications:
   email: false
-language: cpp
-compiler:
-- clang
+
+language: C++
+
 before_install:
-    - sudo apt-get install build-essential
-    - sudo add-apt-repository -y ppa:kalakris/cmake
-    - sudo add-apt-repository -y ppa:saiarcot895/chromium-beta
-    - sudo apt-get update -qq
-    - sudo apt-get install cmake
-    - sudo apt-get install ninja-build
-    - export D2V=`git ls-remote --tags https://github.com/luca-heltai/dealii | tail -n 1 | awk -F"/" '{print $3}'`
-    - echo "Deal.II version $D2V"
-    - wget https://github.com/luca-heltai/dealii/releases/download/$D2V/dealii-travis-CI-build.tgz
-    - export D2SV=`git ls-remote --tags https://github.com/luca-heltai/dealii-sak | tail -n 1 | awk -F"/" '{print $3}'`
-    - echo "Deal.II sak version $D2SV"
-    - wget https://github.com/luca-heltai/dealii-sak/releases/download/$D2SV/dealii-sak-CI-build.tgz
-    - tar xfz dealii-travis-CI-build.tgz -C /
-    - tar xfz dealii-sak-CI-build.tgz -C /
-    - ./scripts/setup_astyle.sh
+- export IMG=mathlab/deal2lkit:dev-debugrelease 
+- alias dr="docker run -P -v `pwd`:/home/dealii/app:rw $IMG /bin/sh -c"
+- docker pull $IMG
+- dr "cd app; ./scripts/check_indentation.sh"
+
 script:
-    - mkdir build
-    - cd build
-    - export DEAL_II_DIR=/home/travis/dealii-inst
-    - export DEAL_II_SAK=/home/travis/dealii-sak-inst
-    - cmake -GNinja -DDEAL_II_SAK=/home/travis/dealii-sak-inst ..
-    - ninja -j4 
-    - ctest -j4 -V
-    - cd ..; ./scripts/check_indentation.sh
+- dr "mkdir app/build; cd app/build; cmake -GNinja ../; ninja"
+- dr "cd app/build; ctest -N; ctest -V"

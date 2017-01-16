@@ -14,18 +14,17 @@ application. The structure of the directory is the following:
 	./tests
 
 The directories contain a minimal working application (deal.II hello
-world) which does nothing at all, except showing a reasonable
-structure for large projects.
+world) which solves the Poisson problem using direct solvers.
 
 The CMakeLists.txt will generate both an executable and a library
 containing all cc files **except** source/main.cc. This library is
 added to the running tests, so that you can make tests on your
 application just as you would do with the deal.II library.
 
-Make sure you have dealii-sak installed, and that you export the 
-environment variable DEAL_II_SAK to point to the location of 
-dealii-sak installation. If you don't want to add that to your 
-environment, just add -DDEAL_II_SAK=/path/to/installation to 
+Make sure you have deal2lkit installed, and that you export the 
+environment variable D2K_DIR to point to the location of 
+deal2lkit installation. If you don't want to add that to your 
+environment, just add -DD2K_DIR=/path/to/installation to 
 your cmake command.
 
 Modify the TARGET variable in the CMakeLists.txt to your application
@@ -51,6 +50,3 @@ Licence
 =======
 
 Please see the file ./LICENSE for details
-
-
-
