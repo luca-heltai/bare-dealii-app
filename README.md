@@ -3,6 +3,9 @@ Bare template for deal.II Application
 
 [![Build Status](https://travis-ci.org/luca-heltai/bare-dealii-app.svg)](https://travis-ci.org/luca-heltai/bare-dealii-app)
 
+[![Build Status](https://gitlab.com/luca-heltai/bare-dealii-app/badges/master/build.svg)](https://gitlab.com/luca-heltai/bare-dealii-app/commits/master)
+
+
 A bare deal.II application, with directory structure, and private
 testsuite.
 
