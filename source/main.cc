@@ -20,8 +20,9 @@ int main (int argc, char **argv)
     {
       Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv,
                                                           numbers::invalid_unsigned_int);
-      Laplacian<2> problem;
-      ParameterAcceptor::initialize("parameters.prm", "used_parameters.prm");
+      Laplacian<DIMENSION> problem;
+      std::string fname = "parameters_"+std::to_string(DIMENSION) + "d.prm";
+      ParameterAcceptor::initialize(fname, "used_"+fname);
       problem.run();
 
     }

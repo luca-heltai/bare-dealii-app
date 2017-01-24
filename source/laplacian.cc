@@ -47,8 +47,8 @@ Laplacian<dim,spacedim>::Laplacian() :
   pfe("Finite element"),
   permeability("Permeability coefficients", 1, "1"),
   dirichlet_bc("Dirichlet boundary conditions", 1),
-  forcing_term("Forcing term", 1, "8*pi^2*sin(2*pi*x)*sin(2*pi*y)"),
-  exact_solution("Exact solution", 1, "sin(2*pi*x)*sin(2*pi*y)"),
+  forcing_term("Forcing term", 1, dim == 2 ? "8*pi^2*sin(2*pi*x)*sin(2*pi*y)" : "0"),
+  exact_solution("Exact solution", 1, dim == 2 ? "sin(2*pi*x)*sin(2*pi*y)" : "0"),
   eh("Error handler"),
   data_out("Data out")
 {}
