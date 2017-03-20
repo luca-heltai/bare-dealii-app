@@ -4,4 +4,4 @@ echo $IMG
 
 CMD=`grep -e '- ' .gitlab-ci.yml | sed 's/- //'`
 
-docker run -v `pwd`:/builds/code_projects/immersed-elasticity $IMG /bin/sh -c "$CMD" 
+docker run --rm -t -v `pwd`:/builds/app $IMG /bin/sh -c "cd /builds/app; $CMD" 
