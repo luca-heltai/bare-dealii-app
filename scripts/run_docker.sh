@@ -4,4 +4,4 @@ echo $IMG
 
 CMD=`grep -e '- ' .gitlab-ci.yml | sed 's/- //'`
 
-docker run -v `pwd`:/builds/luca-heltai/dealii-bare-app $IMG /bin/sh -c "$CMD" 
+docker run --rm -t -i -v `pwd`:/builds/app $IMG /bin/sh -c "cd /builds/app; $CMD" 

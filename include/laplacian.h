@@ -1,52 +1,72 @@
-//-------------------------------------------------------
-//
-//    Copyright (C) 2014 by Luca Heltai
-//
-//    This file is subject to LGPL and may not be  distributed
-//    without copyright and license information. Please refer
-//    to the file LICENCE for the  text  and
-//    further information on this license.
-//
-//-------------------------------------------------------
+/* ---------------------------------------------------------------------
+ *
+ * Copyright (C) 2000 - 2020 by the deal.II authors
+ *
+ * This file is part of the deal.II library.
+ *
+ * The deal.II library is free software; you can use it, redistribute
+ * it, and/or modify it under the terms of the GNU Lesser General
+ * Public License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * The full text of the license can be found in the file LICENSE.md at
+ * the top level directory of deal.II.
+ *
+ * ---------------------------------------------------------------------
 
-#ifndef __lh_laplacian_h
-#define __lh_laplacian_h
+ *
+ * Author: Wolfgang Bangerth, University of Heidelberg, 2000
+ * Modified by: Luca Heltai, 2020
+ */
+#ifndef dealii_laplacian_h
+#define dealii_laplacian_h
 
-#include <iostream>
+#include <deal.II/dofs/dof_handler.h>
 
-#include <deal2lkit/utilities.h>
-#include <deal2lkit/parameter_acceptor.h>
-#include <deal2lkit/parsed_grid_generator.h>
-#include <deal2lkit/parsed_finite_element.h>
-#include <deal2lkit/parsed_function.h>
-#include <deal2lkit/parsed_data_out.h>
-#include <deal2lkit/error_handler.h>
+#include <deal.II/fe/fe_q.h>
 
-using namespace deal2lkit;
+#include <deal.II/grid/tria.h>
 
-template <int dim, int spacedim=dim>
-class Laplacian : public ParameterAcceptor
+#include <deal.II/lac/affine_constraints.h>
+#include <deal.II/lac/dynamic_sparsity_pattern.h>
+#include <deal.II/lac/sparse_matrix.h>
+#include <deal.II/lac/vector.h>
+
+#include <fstream>
+
+template <int dim>
+class Laplacian
 {
 public:
   Laplacian();
 
-  virtual void declare_parameters(ParameterHandler &prm);
-
-  void run();
+  void
+  run();
 
 private:
-  unsigned int initial_refinement;
-  unsigned int n_cycles;
-  std::vector<unsigned int> dirichlet_ids;
+  void
+  setup_system();
+  void
+  assemble_system();
+  void
+  solve();
+  void
+  refine_grid();
+  void
+  output_results(const unsigned int cycle) const;
 
-  ParsedGridGenerator<dim,spacedim> pgg;
-  ParsedFiniteElement<dim,spacedim> pfe;
-  ParsedFunction<spacedim> permeability;
-  ParsedFunction<spacedim> dirichlet_bc;
-  ParsedFunction<spacedim> forcing_term;
-  ParsedFunction<spacedim> exact_solution;
-  ErrorHandler<1> eh;
-  ParsedDataOut<dim,spacedim> data_out;
+  dealii::Triangulation<dim> triangulation;
+
+  dealii::FE_Q<dim>       fe;
+  dealii::DoFHandler<dim> dof_handler;
+
+
+  dealii::AffineConstraints<double> constraints;
+
+  dealii::SparseMatrix<double> system_matrix;
+  dealii::SparsityPattern      sparsity_pattern;
+
+  dealii::Vector<double> solution;
+  dealii::Vector<double> system_rhs;
 };
 
 #endif

@@ -1,136 +1,258 @@
-//-------------------------------------------------------
-//
-//    Copyright (C) 2014 by Luca Heltai
-//
-//    This file is subject to LGPL and may not be  distributed
-//    without copyright and license information. Please refer
-//    to the file LICENCE for the  text  and
-//    further information on this license.
-//
-//-------------------------------------------------------
+/* ---------------------------------------------------------------------
+ *
+ * Copyright (C) 2000 - 2020 by the deal.II authors
+ *
+ * This file is part of the deal.II library.
+ *
+ * The deal.II library is free software; you can use it, redistribute
+ * it, and/or modify it under the terms of the GNU Lesser General
+ * Public License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * The full text of the license can be found in the file LICENSE.md at
+ * the top level directory of deal.II.
+ *
+ * ---------------------------------------------------------------------
+ *
+ * Author: Wolfgang Bangerth, University of Heidelberg, 2000
+ * Modified by: Luca Heltai, 2020
+ */
 
-#include <iostream>
 
-#include <deal.II/grid/tria.h>
-#include <deal.II/dofs/dof_handler.h>
-#include <deal.II/grid/grid_generator.h>
-#include <deal.II/grid/tria_accessor.h>
-#include <deal.II/grid/tria_iterator.h>
-#include <deal.II/dofs/dof_accessor.h>
-#include <deal.II/fe/fe_q.h>
-#include <deal.II/dofs/dof_tools.h>
-#include <deal.II/fe/fe_values.h>
-#include <deal.II/base/quadrature_lib.h>
-#include <deal.II/base/function.h>
-#include <deal.II/numerics/vector_tools.h>
-#include <deal.II/numerics/matrix_tools.h>
-#include <deal.II/lac/sparse_direct.h>
-#include <deal.II/lac/vector.h>
-#include <deal.II/lac/full_matrix.h>
-#include <deal.II/lac/sparse_matrix.h>
-#include <deal.II/lac/dynamic_sparsity_pattern.h>
-#include <deal.II/lac/solver_cg.h>
-#include <deal.II/lac/precondition.h>
-#include <deal.II/numerics/data_out.h>
-#include <fstream>
-#include <iostream>
 
 #include "laplacian.h"
 
-#include <deal.II/numerics/matrix_tools.h>
+#include <deal.II/base/quadrature_lib.h>
+
+#include <deal.II/dofs/dof_handler.h>
+#include <deal.II/dofs/dof_tools.h>
+
+#include <deal.II/fe/fe_q.h>
+#include <deal.II/fe/fe_values.h>
+
+#include <deal.II/grid/grid_generator.h>
+#include <deal.II/grid/grid_out.h>
+#include <deal.II/grid/grid_refinement.h>
+#include <deal.II/grid/tria.h>
+
+#include <deal.II/lac/affine_constraints.h>
+#include <deal.II/lac/dynamic_sparsity_pattern.h>
+#include <deal.II/lac/full_matrix.h>
+#include <deal.II/lac/precondition.h>
+#include <deal.II/lac/solver_cg.h>
+#include <deal.II/lac/sparse_matrix.h>
+#include <deal.II/lac/vector.h>
+
+#include <deal.II/numerics/data_out.h>
+#include <deal.II/numerics/error_estimator.h>
+#include <deal.II/numerics/vector_tools.h>
+
+#include <fstream>
+
+using namespace dealii;
 
 
-template <int dim, int spacedim>
-Laplacian<dim,spacedim>::Laplacian() :
-  ParameterAcceptor("Global parameters"),
-  pgg("Grid"),
-  pfe("Finite element"),
-  permeability("Permeability coefficients", 1, "1"),
-  dirichlet_bc("Dirichlet boundary conditions", 1),
-  forcing_term("Forcing term", 1, "8*pi^2*sin(2*pi*x)*sin(2*pi*y)"),
-  exact_solution("Exact solution", 1, "sin(2*pi*x)*sin(2*pi*y)"),
-  eh("Error handler"),
-  data_out("Data out")
+template <int dim>
+double
+coefficient(const Point<dim> &p)
+{
+  if (p.square() < 0.5 * 0.5)
+    return 20;
+  else
+    return 1;
+}
+
+
+
+template <int dim>
+Laplacian<dim>::Laplacian()
+  : fe(2)
+  , dof_handler(triangulation)
 {}
 
-template <int dim, int spacedim>
-void Laplacian<dim,spacedim>::declare_parameters(ParameterHandler &prm)
+
+
+template <int dim>
+void
+Laplacian<dim>::setup_system()
 {
+  dof_handler.distribute_dofs(fe);
 
-  add_parameter(prm, &n_cycles, "Number of cycles", "4",
-                Patterns::Integer());
+  solution.reinit(dof_handler.n_dofs());
+  system_rhs.reinit(dof_handler.n_dofs());
 
-  add_parameter(prm, &initial_refinement, "Initial refinement", "1",
-                Patterns::Integer());
+  constraints.clear();
+  DoFTools::make_hanging_node_constraints(dof_handler, constraints);
 
-  add_parameter(prm, &dirichlet_ids, "Dirichlet boundary ids", "0",
-                Patterns::List(Patterns::Integer()));
 
+  VectorTools::interpolate_boundary_values(dof_handler,
+                                           0,
+                                           Functions::ZeroFunction<dim>(),
+                                           constraints);
+
+  constraints.close();
+
+  DynamicSparsityPattern dsp(dof_handler.n_dofs());
+  DoFTools::make_sparsity_pattern(dof_handler,
+                                  dsp,
+                                  constraints,
+                                  /*keep_constrained_dofs = */ false);
+
+  sparsity_pattern.copy_from(dsp);
+
+  system_matrix.reinit(sparsity_pattern);
 }
 
 
 
-template <int dim, int spacedim>
-void Laplacian<dim,spacedim>::run()
+template <int dim>
+void
+Laplacian<dim>::assemble_system()
 {
+  const QGauss<dim> quadrature_formula(fe.degree + 1);
 
-  SparsityPattern      sparsity;
-  SparseMatrix<double> matrix;
+  FEValues<dim> fe_values(fe,
+                          quadrature_formula,
+                          update_values | update_gradients |
+                            update_quadrature_points | update_JxW_values);
 
-  Vector<double>       solution;
-  Vector<double>       rhs;
+  const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
 
-  auto tria = pgg.serial();
-  tria->refine_global(initial_refinement);
+  FullMatrix<double> cell_matrix(dofs_per_cell, dofs_per_cell);
+  Vector<double>     cell_rhs(dofs_per_cell);
 
-  auto fe = pfe();
-  DoFHandler<dim,spacedim> dh(*tria);
+  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
 
-  for (unsigned int cycle=0; cycle<n_cycles; ++cycle)
+  for (const auto &cell : dof_handler.active_cell_iterators())
     {
-      // After the first round, make an additional refinement
-      if (cycle>0)
-        tria->refine_global(1);
+      cell_matrix = 0;
+      cell_rhs    = 0;
 
-      dh.distribute_dofs(*fe);
+      fe_values.reinit(cell);
 
-      ConstraintMatrix     constraints;
-      // Initialize matrix and vectors
-      DynamicSparsityPattern d_sparsity(dh.n_dofs());
-      DoFTools::make_sparsity_pattern (dh, d_sparsity);
-      sparsity.copy_from(d_sparsity);
-      matrix.reinit (sparsity);
+      for (const unsigned int q_index : fe_values.quadrature_point_indices())
+        {
+          const double current_coefficient =
+            coefficient<dim>(fe_values.quadrature_point(q_index));
+          for (const unsigned int i : fe_values.dof_indices())
+            {
+              for (const unsigned int j : fe_values.dof_indices())
+                cell_matrix(i, j) +=
+                  (current_coefficient *              // a(x_q)
+                   fe_values.shape_grad(i, q_index) * // grad phi_i(x_q)
+                   fe_values.shape_grad(j, q_index) * // grad phi_j(x_q)
+                   fe_values.JxW(q_index));           // dx
 
-      solution.reinit(dh.n_dofs());
-      rhs.reinit(dh.n_dofs());
+              cell_rhs(i) += (1.0 *                               // f(x)
+                              fe_values.shape_value(i, q_index) * // phi_i(x_q)
+                              fe_values.JxW(q_index));            // dx
+            }
+        }
 
-      // Add boundary conditions for each Dirichlet id
-      for (auto id : dirichlet_ids)
-        VectorTools::interpolate_boundary_values(dh, id,
-                                                 dirichlet_bc, constraints);
-
-      constraints.close();
-
-      QGauss<dim> quad(2*fe->degree+1);
-      MatrixCreator::create_laplace_matrix (StaticMappingQ1<dim,spacedim>::mapping,
-                                            dh, quad, matrix,
-                                            forcing_term, rhs, &permeability, constraints);
-
-      SparseDirectUMFPACK inverse;
-      inverse.factorize(matrix);
-      inverse.vmult(solution, rhs);
-      constraints.distribute(solution);
-
-      eh.error_from_exact(dh, solution, exact_solution);
-
-      data_out.prepare_data_output (dh, "." + Utilities::int_to_string(cycle));
-      data_out.add_data_vector (solution, "solution");
-      data_out.write_data_and_clear ();
+      cell->get_dof_indices(local_dof_indices);
+      constraints.distribute_local_to_global(
+        cell_matrix, cell_rhs, local_dof_indices, system_matrix, system_rhs);
     }
-  eh.output_table();
 }
 
 
-template class Laplacian<1,1>;
-template class Laplacian<2,2>;
-template class Laplacian<3,3>;
+
+template <int dim>
+void
+Laplacian<dim>::solve()
+{
+  SolverControl            solver_control(1000, 1e-12);
+  SolverCG<Vector<double>> solver(solver_control);
+
+  PreconditionSSOR<SparseMatrix<double>> preconditioner;
+  preconditioner.initialize(system_matrix, 1.2);
+
+  solver.solve(system_matrix, solution, system_rhs, preconditioner);
+
+  constraints.distribute(solution);
+}
+
+
+
+template <int dim>
+void
+Laplacian<dim>::refine_grid()
+{
+  Vector<float> estimated_error_per_cell(triangulation.n_active_cells());
+
+  KellyErrorEstimator<dim>::estimate(dof_handler,
+                                     QGauss<dim - 1>(fe.degree + 1),
+                                     {},
+                                     solution,
+                                     estimated_error_per_cell);
+
+  GridRefinement::refine_and_coarsen_fixed_number(triangulation,
+                                                  estimated_error_per_cell,
+                                                  0.3,
+                                                  0.03);
+
+  triangulation.execute_coarsening_and_refinement();
+}
+
+
+
+template <int dim>
+void
+Laplacian<dim>::output_results(const unsigned int cycle) const
+{
+  {
+    GridOut               grid_out;
+    std::ofstream         output("grid-" + std::to_string(cycle) + ".gnuplot");
+    GridOutFlags::Gnuplot gnuplot_flags(false, 5);
+    grid_out.set_flags(gnuplot_flags);
+    MappingQGeneric<dim> mapping(3);
+    grid_out.write_gnuplot(triangulation, output, &mapping);
+  }
+
+  {
+    DataOut<dim> data_out;
+    data_out.attach_dof_handler(dof_handler);
+    data_out.add_data_vector(solution, "solution");
+    data_out.build_patches();
+
+    std::ofstream output("solution-" + std::to_string(cycle) + ".vtu");
+    data_out.write_vtu(output);
+  }
+}
+
+
+
+template <int dim>
+void
+Laplacian<dim>::run()
+{
+  for (unsigned int cycle = 0; cycle < 8; ++cycle)
+    {
+      std::cout << "Cycle " << cycle << ':' << std::endl;
+
+      if (cycle == 0)
+        {
+          GridGenerator::hyper_ball(triangulation);
+          triangulation.refine_global(1);
+        }
+      else
+        refine_grid();
+
+
+      std::cout << "   Number of active cells:       "
+                << triangulation.n_active_cells() << std::endl;
+
+      setup_system();
+
+      std::cout << "   Number of degrees of freedom: " << dof_handler.n_dofs()
+                << std::endl;
+
+      assemble_system();
+      solve();
+      output_results(cycle);
+    }
+}
+
+
+template class Laplacian<1>;
+template class Laplacian<2>;
+template class Laplacian<3>;

@@ -1,33 +1,36 @@
-//-------------------------------------------------------
-//
-//    Copyright (C) 2014 by Luca Heltai
-//
-//    This file is subject to LGPL and may not be  distributed
-//    without copyright and license information. Please refer
-//    to the file LICENCE for the  text  and
-//    further information on this license.
-//
-//-------------------------------------------------------
-
-#include <iostream>
+/* ---------------------------------------------------------------------
+ *
+ * Copyright (C) 2000 - 2020 by the deal.II authors
+ *
+ * This file is part of the deal.II library.
+ *
+ * The deal.II library is free software; you can use it, redistribute
+ * it, and/or modify it under the terms of the GNU Lesser General
+ * Public License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * The full text of the license can be found in the file LICENSE.md at
+ * the top level directory of deal.II.
+ *
+ * ---------------------------------------------------------------------
+ *
+ * Author: Wolfgang Bangerth, University of Heidelberg, 2000
+ * Modified by: Luca Heltai, 2020
+ */
 
 #include "laplacian.h"
-#include <deal.II/base/utilities.h>
 
-int main (int argc, char **argv)
+int
+main()
 {
   try
     {
-      Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv,
-                                                          numbers::invalid_unsigned_int);
-      Laplacian<2> problem;
-      ParameterAcceptor::initialize("parameters.prm", "used_parameters.prm");
-      problem.run();
-
+      Laplacian<DEAL_DIMENSION> laplace_problem;
+      laplace_problem.run();
     }
   catch (std::exception &exc)
     {
-      std::cerr << std::endl << std::endl
+      std::cerr << std::endl
+                << std::endl
                 << "----------------------------------------------------"
                 << std::endl;
       std::cerr << "Exception on processing: " << std::endl
@@ -40,7 +43,8 @@ int main (int argc, char **argv)
     }
   catch (...)
     {
-      std::cerr << std::endl << std::endl
+      std::cerr << std::endl
+                << std::endl
                 << "----------------------------------------------------"
                 << std::endl;
       std::cerr << "Unknown exception!" << std::endl
@@ -48,7 +52,7 @@ int main (int argc, char **argv)
                 << "----------------------------------------------------"
                 << std::endl;
       return 1;
-    };
+    }
 
   return 0;
 }
