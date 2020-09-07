@@ -105,7 +105,6 @@ ENDFOREACH()
 # Deal.II style testing
 IF(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/tests AND ENABLE_DEAL_II_APP_TESTING)
   ADD_SUBDIRECTORY(tests)
-  ENABLE_TESTING()
 ENDIF()
 
 # Google test style testing
@@ -113,7 +112,6 @@ IF(ENABLE_GOOGLE_TESTING)
   find_package(GTest)
   if (GTest_FOUND)
       ADD_SUBDIRECTORY(gtests)
-      ENABLE_TESTING()
   else ()
       MESSAGE(WARNING "GTest library not found. Tests will not be compiled!")
   endif ()
@@ -133,3 +131,4 @@ IF(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in)
 endif()
 
 add_custom_target(indent ./scripts/indent WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+ENABLE_TESTING()
