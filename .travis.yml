@@ -13,9 +13,8 @@ notifications:
 language: C++
 
 before_install:
-- docker pull mathlab/deal2lkit:dev-debugrelease
-- ./scripts/dr.sh "cd app; ./scripts/check_indentation.sh"
+- ./scripts/dr.sh "./scripts/check_indentation.sh"
 
 script:
-- ./scripts/dr.sh "test -d app/build-travis && rm -rf app/build-travis; mkdir app/build-travis; cd app/build-travis; cmake -GNinja ../; ninja"
-- ./scripts/dr.sh "cd app/build-travis; ctest -N; ctest -V"
+- ./scripts/dr.sh "test -d ./build-travis-${BUILD_TYPE} && rm -rf ./build-travis-${BUILD_TYPE}; mkdir ./build-travis-${BUILD_TYPE}; cd ./build-travis-${BUILD_TYPE}; cmake -GNinja -DCMAKE_BUILD_TYPE=$BUILD_TYPE ../; ninja"
+- ./scripts/dr.sh "cd ./build-travis-${BUILD_TYPE}; ctest -N; ctest --output-on-failure"

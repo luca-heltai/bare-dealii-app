@@ -1,4 +1,4 @@
-image: mathlab/deal2lkit:dev-debugrelease 
+image: dealii/dealii:master-focal
 
 before_script:
   - export D=/builds/luca-heltai/bare-dealii-app
@@ -11,7 +11,7 @@ debug:
    - cd $D
    - test -d build_linux_debug && rm -rf build_linux_debug
    - mkdir build_linux_debug; cd build_linux_debug; cmake .. -GNinja -DCMAKE_BUILD_TYPE=Debug; ninja
-   - ctest -N; ctest -V
+   - ctest -N; ctest --output-on-failure
 
 release:
   script:
@@ -19,4 +19,4 @@ release:
    - cd $D
    - test -d build_linux_release && rm -rf build_linux_release
    - mkdir build_linux_release; cd build_linux_release; cmake .. -GNinja -DCMAKE_BUILD_TYPE=Release; ninja
-   - ctest -N; ctest -V
+   - ctest -N; ctest --output-on-failure
