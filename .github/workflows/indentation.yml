@@ -13,9 +13,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: setup
+    - name: Check indentation
       run: |
-         ./contrib/utilities/download_clang_format
-    - name: build
-      run: |
-         ./contrib/utilities/check_indentation.sh
+         ./scripts/dr.sh ./scripts/check_indentation.sh 
