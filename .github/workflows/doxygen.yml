@@ -10,6 +10,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: Get deal.tag
+      run: |
+        wget https://www.dealii.org/developer/doxygen/deal.tag
         
     - name: Build Doxygen documentation
       uses: mattnotmitt/doxygen-action@v1.1.0

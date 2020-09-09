@@ -33,6 +33,8 @@
 
 #include <fstream>
 
+using namespace dealii;
+
 template <int dim>
 class Laplacian
 {
@@ -54,19 +56,19 @@ private:
   void
   output_results(const unsigned int cycle) const;
 
-  dealii::Triangulation<dim> triangulation;
+  Triangulation<dim> triangulation;
 
-  dealii::FE_Q<dim>       fe;
-  dealii::DoFHandler<dim> dof_handler;
+  FE_Q<dim>       fe;
+  DoFHandler<dim> dof_handler;
 
 
-  dealii::AffineConstraints<double> constraints;
+  AffineConstraints<double> constraints;
 
-  dealii::SparseMatrix<double> system_matrix;
-  dealii::SparsityPattern      sparsity_pattern;
+  SparseMatrix<double> system_matrix;
+  SparsityPattern      sparsity_pattern;
 
-  dealii::Vector<double> solution;
-  dealii::Vector<double> system_rhs;
+  Vector<double> solution;
+  Vector<double> system_rhs;
 };
 
 #endif
