@@ -61,7 +61,7 @@ the documentation, and test the library from within github actions.
 
 The documentation is built and deployed at each merge to master. You can 
 find the latest documentation here:
-http://luca-heltai.github.io/bare-dealii-app/
+https://luca-heltai.github.io/bare-dealii-app/
 
 Licence
 =======
