@@ -15,10 +15,9 @@ jobs:
     - uses: actions/checkout@v2
     - name: Test debug
       run: |
-
-         ./scripts/dr.sh "test -d build_linux_debug && rm -rf build_linux_debug"
+         ./scripts/dr.sh "rm -rf build_linux_debug"
          ./scripts/dr.sh "mkdir build_linux_debug; cd build_linux_debug; cmake .. -GNinja -DCMAKE_BUILD_TYPE=Debug; ninja"
-         ./scripts/dr.sh "ctest -N; ctest --output-on-failure"
+         ./scripts/dr.sh "cd build_linux_debug; ctest -N; ctest --output-on-failure"
 
   release:
 
@@ -28,7 +27,6 @@ jobs:
     - uses: actions/checkout@v2
     - name: Test release
       run: |
-
-          ./scripts/dr.sh "test -d build_linux_release && rm -rf build_linux_release"
+          ./scripts/dr.sh "rm -rf build_linux_release"
           ./scripts/dr.sh "mkdir build_linux_release; cd build_linux_release; cmake .. -GNinja -DCMAKE_BUILD_TYPE=Release; ninja"
-          ./scripts/dr.sh "ctest -N; ctest --output-on-failure"
+          ./scripts/dr.sh "cd build_linux_release; ctest -N; ctest --output-on-failure"
