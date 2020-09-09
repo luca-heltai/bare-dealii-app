@@ -16,19 +16,22 @@ application. The structure of the directory is the following:
 	./include
 	./tests
 	./gtests
+	./doc
 
 The directories contain a minimal working application (identical to step-6, 
 where implementations and declarations have been separated) to solve the
 Poisson problem on a square, a test directory that uses deal.II style testing, 
-and a test directory that uses google tests.
+a test directory that uses google tests, and a doc directory, that contains
+a `Doxyfile` to use with `doxygen`.
 
-The CMakeLists.txt will generate both an executable and a library
-containing all cc files **except** source/main.cc. This library is
-added to the running tests, so that you can make tests on your
-application just as you would do with the deal.II library.
+The `CMakeLists.txt` will generate both some executables and two libraries
+containing all cc files **except** `source/main.cc`, one for Debug mode and
+one for Release mode. This library is linked to the running tests, so that you 
+can make tests on your application just as you would do with the deal.II 
+library.
 
 Modify the TARGET variable in the CMakeLists.txt to your application
-name. Two libraries named ./tests/lib${TARGET}.so and ./tests/lib${TARGET}.g 
+name. Two libraries named ./tests/lib${TARGET}.so and ./tests/lib${TARGET}.g.so
 will be generated together with one executable per dimension, per build type,
 i.e., a total of six executables, and two libraries.
 
@@ -44,7 +47,9 @@ to start the testsuite.
 
 Take a look at
 https://www.dealii.org/developer/developers/testsuite.html for more
-information on how to create tests and add categories of tests.
+information on how to create tests and add categories of tests, and a look at
+https://github.com/google/googletest/blob/master/googletest/docs/primer.md
+for a quick setup of unit tests with google test.
 
 Both `.travis.yml` and `.gitlab-ci.yml` files are provided that 
 build the application and run the tests in the tests directory using
@@ -53,6 +58,10 @@ image provided on dockerhub.com: `dealii/dealii:master-focal`.
 
 Moreover, three github actions are provided to check indentation, build
 the documentation, and test the library from within github actions.
+
+The documentation is built and deployed at each merge to master. You can 
+find the latest documentation here:
+http://luca-heltai.github.io/bare-dealii-app/
 
 Licence
 =======
