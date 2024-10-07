@@ -35,11 +35,11 @@ total of six executables, and two libraries.
 
 After you have compiled your application, you can run
 
- make test
+  make test
 
 or
 
- ctest
+  ctest
 
 to start the testsuite.
 
@@ -49,13 +49,9 @@ information on how to create tests and add categories of tests, and a look at
 <https://github.com/google/googletest/blob/master/googletest/docs/primer.md>
 for a quick setup of unit tests with google test.
 
-Both `.travis.yml` and `.gitlab-ci.yml` files are provided that
-build the application and run the tests in the tests directory using
-ctest, in continuous integration, by running under docker with the
-image provided on dockerhub.com: `dealii/dealii:master-focal`.
-
-Moreover, three github actions are provided to check indentation, build
-the documentation, and test the library from within github actions.
+Github action files are provided that build the application, run the tests in
+the tests directory using ctest, run the google tests in the gtests directory,
+and generate the documentation using `Doxygen`.
 
 The documentation is built and deployed at each merge to master. You can
 find the latest documentation here:
