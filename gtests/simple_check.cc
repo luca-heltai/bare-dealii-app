@@ -9,8 +9,8 @@
 //  LLVM-exception as published by the Free Software Foundation; either version
 //  3.0 of the License, or (at your option) any later version. The full text of
 //  the license can be found in the file LICENSE at the top level of the SQH
-//  solver platform platform distribution. 
-// 
+//  solver platform platform distribution.
+//
 // ---------------------------------------------------------------------
 
 #include <deal.II/grid/grid_generator.h>
