@@ -3,7 +3,7 @@ Bare template for deal.II Application
 
 | Doxygen | Indentation | Tests |
 |----------|-------------|-------|
-| ![Build Status](https://github.com/luca-heltai/bare-dealii-app/actions/workflows/tests.yml/badge.svg) | ![Doxygen](https://github.com/luca-heltai/bare-dealii-app/actions/workflows/doxygen.yml/badge.svg) | ![Indentation Check](https://github.com/luca-heltai/bare-dealii-app/actions/workflows/indentation.yml/badge.svg) |
+| [![Build Status](https://github.com/luca-heltai/bare-dealii-app/actions/workflows/tests.yml/badge.svg "Build Status")](https://github.com/luca-heltai/bare-dealii-app/actions/workflows/tests.yml) | [![Doxygen](https://github.com/luca-heltai/bare-dealii-app/actions/workflows/doxygen.yml/badge.svg "Doxygen")](https://github.com/luca-heltai/bare-dealii-app/actions/workflows/doxygen.yml) | [![Indentation Check](https://github.com/luca-heltai/bare-dealii-app/actions/workflows/indentation.yml/badge.svg "Indentation Check")](https://github.com/luca-heltai/bare-dealii-app/actions/workflows/indentation.yml) |
 
 A bare deal.II application, with directory structure, a testsuite, and unittest
 block based on google tests.
