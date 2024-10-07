@@ -7,12 +7,15 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
+  indent:
 
     runs-on: ubuntu-latest
+    container: 
+      image: dealii/dealii:v9.6.0-jammy
+      options: --user root
 
     steps:
     - uses: actions/checkout@v2
     - name: Check indentation
       run: |
-         ./scripts/dr.sh ./scripts/check_indentation.sh 
+        ./scripts/check_indentation.sh

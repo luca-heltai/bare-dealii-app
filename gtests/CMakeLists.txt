@@ -36,7 +36,5 @@ FOREACH(_build_type ${_d2_build_types})
     TARGET_LINK_LIBRARIES(${_exe} ${TEST_LIBRARIES_${_BUILD_TYPE}} ${GTEST_LIBRARY})   
     DEAL_II_SETUP_TARGET(${_exe} ${_BUILD_TYPE})
     include_directories(${GTEST_INCLUDE_DIRS})
-    
-    gtest_discover_tests(${_exe})
   ENDIF()
 ENDFOREACH()

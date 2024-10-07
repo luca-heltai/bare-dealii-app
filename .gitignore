@@ -32,3 +32,10 @@ CMakeFiles
 CMakeCache.txt
 
 compile_commands.json
+
+# Doxygen stuff
+deal.tag
+doc/html
+
+# Vscode local configuration
+.vscode

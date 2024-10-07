@@ -5,18 +5,19 @@
 	// Sets the run context to one level up instead of the .devcontainer folder.
 	"context": "..",
 	// Update the 'dockerFile' property if you aren't using the standard 'Dockerfile' filename.
-	"dockerFile": "Dockerfile",
+	"image": "dealii/dealii:v9.6.0-jammy",
 	// Set *default* container specific settings.json values on container create.
 	"settings": {
 		"terminal.integrated.shell.linux": null
 	},
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
+		"alefragnani.project-manager",
 		"davydden.dealii-prm",
 		"johnpapa.vscode-peacock",
-		"alefragnani.project-manager",
+		"ms-vscode.cmake-tools",
 		"ms-vscode.cpptools",
-		"shan.code-settings-sync"
+		"shan.code-settings-sync",
 	]
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],
