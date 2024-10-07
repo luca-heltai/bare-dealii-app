@@ -14,21 +14,20 @@ application. The structure of the directory is the following:
  ./doc
 
 The directories contain a minimal working application (identical to step-6,
-where implementations and declarations have been separated) to solve the
-Poisson problem on a square, a test directory that uses deal.II style testing,
-a test directory that uses google tests, and a doc directory, that contains
-a `Doxyfile` to use with `doxygen`.
+where implementations and declarations have been separated) to solve the Poisson
+problem on a square, a test directory that uses deal.II style testing, a test
+directory that uses google tests, and a doc directory, that contains a
+`Doxyfile` to use with `doxygen`.
 
 The `CMakeLists.txt` will generate both some executables and two libraries
-containing all cc files **except** `source/main.cc`, one for Debug mode and
-one for Release mode. This library is linked to the running tests, so that you
-can make tests on your application just as you would do with the deal.II
-library.
+containing all cc files **except** `source/main.cc`, one for Debug mode and one
+for Release mode. This library is linked to the running tests, so that you can
+make tests on your application just as you would do with the deal.II library.
 
-Modify the TARGET variable in the CMakeLists.txt to your application
-name. Two libraries named ./tests/lib${TARGET}.so and ./tests/lib${TARGET}.g.so
-will be generated together with one executable per dimension, per build type,
-i.e., a total of six executables, and two libraries.
+Modify the TARGET variable in the CMakeLists.txt to your application name. Two
+libraries named `./tests/lib${TARGET}.so` and `./tests/lib${TARGET}.g.so` will
+be generated together with one executable per dimension, per build type, i.e., a
+total of six executables, and two libraries.
 
 After you have compiled your application, you can run
 
