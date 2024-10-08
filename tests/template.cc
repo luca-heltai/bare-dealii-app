@@ -1,13 +1,17 @@
-//-----------------------------------------------------------
+// ---------------------------------------------------------------------
 //
-//    Copyright (C) 2020 by the deal.II authors
+// Copyright (C) 2024 by Luca Heltai
 //
-//    This file is subject to LGPL and may not be distributed
-//    without copyright and license information. Please refer
-//    to the file deal.II/doc/license.html for the  text  and
-//    further information on this license.
+// This file is part of the bare-dealii-app application, based on the deal.II library.
 //
-//-----------------------------------------------------------
+//  The bare-dealii-app application is free software; you can use it, redistribute it,
+//  and/or modify it under the terms of the Apache-2.0 License WITH
+//  LLVM-exception as published by the Free Software Foundation; either version
+//  3.0 of the License, or (at your option) any later version. The full text of
+//  the license can be found in the file LICENSE at the top level of the 
+//  bare-dealii-app distribution. 
+// 
+// ---------------------------------------------------------------------
 
 #include "tests.h"
 
