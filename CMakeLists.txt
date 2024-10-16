@@ -64,6 +64,28 @@ OPTION(ENABLE_GOOGLE_TESTING
   "Enable googletest style tests in this application." ON)
 OPTION(ENABLE_LIKWID
   "Enable Likwid in this application." OFF)
+OPTION(ENABLE_1D
+  "Enable 1D targets." ON)
+OPTION(ENABLE_2D
+  "Enable 2D targets." ON)
+OPTION(ENABLE_3D
+  "Enable 3D targets." ON)
+
+# Create a list called DIMENSIONS with 1 2 3
+SET(DIMENSIONS 1 2 3)
+
+# Remove dimensions from the list if they are disabled
+if(NOT ENABLE_1D)
+  list(REMOVE_ITEM DIMENSIONS 1)
+endif()
+
+if(NOT ENABLE_2D)
+  list(REMOVE_ITEM DIMENSIONS 2)
+endif()
+
+if(NOT ENABLE_3D)
+  list(REMOVE_ITEM DIMENSIONS 3)
+endif()
 
 if(ENABLE_LIKWID)
   FIND_PACKAGE(likwid)
@@ -96,7 +118,7 @@ FOREACH(_build_type ${_d2_build_types})
     STRING(TOUPPER "${_build_type}" _BUILD_TYPE)
 
     # Setup library
-    FOREACH(_dim 1 2 3)
+    FOREACH(_dim ${DIMENSIONS})
       SET(_lib "${_main_target}${_dim}d${_p}")
       MESSAGE("-- Configuring library ${_lib}")
 
@@ -111,24 +133,22 @@ FOREACH(_build_type ${_d2_build_types})
 
       DEAL_II_SETUP_TARGET(${_lib} ${_BUILD_TYPE})
       SET(TEST_LIBRARIES_${_BUILD_TYPE} ${_lib})
-    ENDFOREACH()
 
-    FOREACH(_dim 1 2 3)
       # Setup one main executable per dimension/per build type
       SET(_lib "${_main_target}${_dim}d${_p}")
-      SET(_exe "${_main_target}_${_dim}d${${_build_type}_postfix}")
-      MESSAGE("-- Configuring executable ${_exe}")
-      ADD_EXECUTABLE(${_exe} ${_main})
-      TARGET_LINK_LIBRARIES(${_exe} ${_lib})
-      TARGET_COMPILE_DEFINITIONS(${_exe} PUBLIC DEAL_DIMENSION=${_dim})
+      SET(_main_exe "${_main_target}_${_dim}d${${_build_type}_postfix}")
+      MESSAGE("-- Configuring executable ${_main_exe}")
+      ADD_EXECUTABLE(${_main_exe} ${_main})
+      TARGET_LINK_LIBRARIES(${_main_exe} ${_lib})
+      TARGET_COMPILE_DEFINITIONS(${_main_exe} PUBLIC DEAL_DIMENSION=${_dim})
 
       IF(likwid_FOUND)
-        TARGET_COMPILE_DEFINITIONS(${_exe} PUBLIC LIKWID_PERFMON)
-        TARGET_LINK_LIBRARIES(${_exe} ${LIKWID_LIBRARY})
-        MESSAGE("-- Configuring  ${_exe} with LIKWID")
+        TARGET_COMPILE_DEFINITIONS(${_main_exe} PUBLIC LIKWID_PERFMON)
+        TARGET_LINK_LIBRARIES(${_main_exe} ${LIKWID_LIBRARY})
+        MESSAGE("-- Configuring  ${_main_exe} with LIKWID")
       endif()
 
-      DEAL_II_SETUP_TARGET(${_exe} ${_BUILD_TYPE})
+      DEAL_II_SETUP_TARGET(${_main_exe} ${_BUILD_TYPE})
 
       # Setup additional executables
       FOREACH(__exec ${_execs})
