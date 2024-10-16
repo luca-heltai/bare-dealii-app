@@ -39,6 +39,7 @@ SET(_main source/main.cc)
 # ###########################################################
 # Declare all source files the target consists of:
 file(GLOB _files source/*cc include/*.h)
+file(GLOB _execs execs/*cc)
 
 # Don't compile the main file into the library
 IF(NOT "${_main}" STREQUAL "")
@@ -101,6 +102,13 @@ FOREACH(_build_type ${_d2_build_types})
 
       ADD_LIBRARY(${_lib} SHARED ${_files})
       TARGET_COMPILE_DEFINITIONS(${_lib} PUBLIC DEAL_DIMENSION=${_dim})
+
+      IF(likwid_FOUND)
+        TARGET_COMPILE_DEFINITIONS(${_lib} PUBLIC LIKWID_PERFMON)
+        TARGET_LINK_LIBRARIES(${_lib} ${LIKWID_LIBRARY})
+        MESSAGE("-- Configuring  ${_lib} with LIKWID")
+      endif()
+
       DEAL_II_SETUP_TARGET(${_lib} ${_BUILD_TYPE})
       SET(TEST_LIBRARIES_${_BUILD_TYPE} ${_lib})
     ENDFOREACH()
@@ -113,6 +121,13 @@ FOREACH(_build_type ${_d2_build_types})
       ADD_EXECUTABLE(${_exe} ${_main})
       TARGET_LINK_LIBRARIES(${_exe} ${_lib})
       TARGET_COMPILE_DEFINITIONS(${_exe} PUBLIC DEAL_DIMENSION=${_dim})
+
+      IF(likwid_FOUND)
+        TARGET_COMPILE_DEFINITIONS(${_exe} PUBLIC LIKWID_PERFMON)
+        TARGET_LINK_LIBRARIES(${_exe} ${LIKWID_LIBRARY})
+        MESSAGE("-- Configuring  ${_exe} with LIKWID")
+      endif()
+
       DEAL_II_SETUP_TARGET(${_exe} ${_BUILD_TYPE})
 
       # Setup additional executables
@@ -124,6 +139,13 @@ FOREACH(_build_type ${_d2_build_types})
         ADD_EXECUTABLE(${_exe} ${__exec})
         TARGET_COMPILE_DEFINITIONS(${_exe} PUBLIC DEAL_II_DIMENSION=${_dim})
         TARGET_LINK_LIBRARIES(${_exe} ${_lib})
+
+        IF(likwid_FOUND)
+          TARGET_COMPILE_DEFINITIONS(${_exe} PUBLIC LIKWID_PERFMON)
+          TARGET_LINK_LIBRARIES(${_exe} ${LIKWID_LIBRARY})
+          MESSAGE("-- Configuring  ${_sideexe} with LIKWID")
+        endif()
+
         DEAL_II_SETUP_TARGET(${_exe} ${_BUILD_TYPE})
       ENDFOREACH()
     ENDFOREACH()
