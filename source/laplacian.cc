@@ -248,6 +248,4 @@ Laplacian<dim>::run()
 }
 
 
-template class Laplacian<1>;
-template class Laplacian<2>;
-template class Laplacian<3>;
+template class Laplacian<DEAL_DIMENSION>;
